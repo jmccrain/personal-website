@@ -1,0 +1,74 @@
+external:
+  - title: "Law Enforcement Administrative Data for Research"
+    year: 2024
+    amount: "$184,374"
+    funder: "Arnold Ventures"
+    role: ""
+    link: ""
+
+  - title: "Policing Research Seminar"
+    year: 2024
+    amount: "$13,800"
+    funder: "Arnold Ventures"
+    role: ""
+    link: ""
+
+  - title: "Policing Policy Research Workshop"
+    year: 2024
+    amount: "$63,628"
+    funder: "Arnold Ventures"
+    role: ""
+    link: ""
+
+  - title: "Policing Leadership and Accountability"
+    year: 2023
+    amount: "$972,083"
+    funder: "National Institute of Justice (NIJ)"
+    role: "PI"
+    link: ""
+
+  - title: "Representation, Responsiveness, and COVID-19"
+    year: 2022
+    amount: "$138,832"
+    funder: "Russell Sage Foundation"
+    role: ""
+    link: ""
+
+  - title: "APSA Centennial Center Research Grant"
+    year: 2022
+    amount: "$9,943"
+    funder: "APSA"
+    role: ""
+    link: ""
+
+  - title: "Levin Center Oversight Fellowship"
+    year: 2022
+    amount: "$10,000"
+    funder: "Levin Center"
+    role: ""
+    link: ""
+
+internal:
+  - title: "Faculty Small Grant"
+    year: 2026
+    amount: "$3,500"
+    funder: "University of Utah"
+    note: "With Chandler Robinson"
+
+  - title: "Betty Glad Award"
+    year: 2023
+    amount: "$12,000"
+    funder: "University of Utah"
+    note: ""
+
+  - title: "Policing Policy, Reforms, and Human Capital"
+    year: 2022
+    amount: "$26,796"
+    funder: "University of Utah"
+    note: "Co-PIs: Ian Adams & Scott Mourtgos"
+
+  - title: "Support for Police Reforms"
+    year: 2022
+    amount: "$5,320"
+    funder: "University of Utah Faculty Small Grant Program"
+    note: ""

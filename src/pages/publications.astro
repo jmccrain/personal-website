@@ -1,0 +1,124 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PublicationCard from '../components/PublicationCard.astro';
+import PublicationFilter from '../components/PublicationFilter.astro';
+import yaml from 'js-yaml';
+import fs from 'node:fs';
+
+const pubData = yaml.load(fs.readFileSync('src/data/publications.yaml', 'utf8')) as any;
+
+const peerReviewed = pubData.peer_reviewed || [];
+const editorSolicited = pubData.editor_solicited || [];
+const underReview = pubData.under_review || [];
+
+// Collect all years from peer-reviewed and editor-solicited
+const allYears = [...new Set([
+  ...peerReviewed.map((p: any) => p.year),
+  ...editorSolicited.map((p: any) => p.year),
+].filter(Boolean))].sort((a: number, b: number) => b - a);
+
+// Collect all keywords across tiers
+const allPubs = [...peerReviewed, ...editorSolicited, ...underReview];
+
+const disciplines = [...new Set(allPubs.map((p: any) => p.discipline).filter(Boolean))];
+const subfields = [...new Set(allPubs.flatMap((p: any) => p.keywords || []))];
+const methods = [...new Set(allPubs.flatMap((p: any) => p.methods || []))];
+
+const keywordGroups = [
+  { tier: 'discipline', label: 'Discipline', items: disciplines },
+  { tier: 'subfield', label: 'Subfield', items: subfields },
+  ...(methods.length > 0 ? [{ tier: 'methods', label: 'Methods', items: methods }] : []),
+];
+---
+
+<BaseLayout title="Publications" description="Publications by Joshua McCrain on media, lobbying, policing, and legislative politics.">
+
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-text-dark-primary mb-1">Publications</h1>
+      <p class="text-gray-600 dark:text-text-dark-secondary">
+        {peerReviewed.length} peer-reviewed articles, {editorSolicited.length} editor-solicited pieces, and {underReview.length} papers under review.
+      </p>
+    </div>
+    <div class="flex gap-2 shrink-0">
+      <a href="https://scholar.google.com/citations?user=oq6WHEAAAAAJ" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-carolina-blue text-carolina-blue rounded-lg text-sm font-medium hover:no-underline hover:bg-carolina-blue hover:text-white transition-colors">
+        Google Scholar
+      </a>
+      <a href="/McCrain_CV.pdf" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-utah-red dark:bg-utah-red-light text-white rounded-lg text-sm font-medium hover:no-underline hover:opacity-90 transition-opacity">
+        CV
+      </a>
+    </div>
+  </div>
+
+  <PublicationFilter years={allYears} keywords={keywordGroups} />
+
+  <!-- Peer-Reviewed -->
+  <section class="pub-section">
+    <h2 class="text-xl font-bold text-gray-900 dark:text-text-dark-primary mb-1 flex items-center gap-2">
+      Peer-Reviewed
+      <span class="pub-count text-sm font-normal text-gray-500">({peerReviewed.length})</span>
+    </h2>
+    <div class="pub-cards">
+      {peerReviewed.map((pub: any, i: number) => (
+        <PublicationCard
+          number={peerReviewed.length - i}
+          title={pub.title}
+          authors={pub.authors}
+          journal={pub.journal}
+          year={pub.year}
+          doi={pub.doi || undefined}
+          preprint={pub.preprint || undefined}
+          abstract={pub.abstract || undefined}
+          discipline={pub.discipline}
+          keywords={pub.keywords}
+          methods={pub.methods}
+        />
+      ))}
+    </div>
+  </section>
+
+  <!-- Editor-Solicited -->
+  <section class="pub-section mt-10">
+    <h2 class="text-xl font-bold text-gray-900 dark:text-text-dark-primary mb-1 flex items-center gap-2">
+      Editor-Solicited
+      <span class="pub-count text-sm font-normal text-gray-500">({editorSolicited.length})</span>
+    </h2>
+    <div class="pub-cards">
+      {editorSolicited.map((pub: any, i: number) => (
+        <PublicationCard
+          number={editorSolicited.length - i}
+          title={pub.title}
+          authors={pub.authors}
+          journal={pub.journal}
+          year={pub.year}
+          doi={pub.doi || undefined}
+          preprint={pub.preprint || undefined}
+          abstract={pub.abstract || undefined}
+          discipline={pub.discipline}
+          keywords={pub.keywords}
+          methods={pub.methods}
+        />
+      ))}
+    </div>
+  </section>
+
+  <!-- Under Review -->
+  <section class="pub-section mt-10">
+    <h2 class="text-xl font-bold text-gray-900 dark:text-text-dark-primary mb-1 flex items-center gap-2">
+      Under Review
+      <span class="pub-count text-sm font-normal text-gray-500">({underReview.length})</span>
+    </h2>
+    <div class="pub-cards">
+      {underReview.map((pub: any) => (
+        <PublicationCard
+          title={pub.title}
+          authors={pub.authors}
+          note={pub.note || undefined}
+          keywords={pub.keywords}
+          methods={pub.methods}
+        />
+      ))}
+    </div>
+  </section>
+
+</BaseLayout>

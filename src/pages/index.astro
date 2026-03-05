@@ -1,0 +1,185 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import yaml from 'js-yaml';
+import fs from 'node:fs';
+
+const pubData = yaml.load(fs.readFileSync('src/data/publications.yaml', 'utf8')) as any;
+const recentPubs = (pubData.peer_reviewed || []).slice(0, 3);
+
+function boldMcCrain(str: string): string {
+  return str.replace(/(McCrain,?\s*(?:Joshua|J\.)?)/g, '<strong>$1</strong>');
+}
+---
+
+<BaseLayout title="Home" description="Joshua McCrain — Assistant Professor of Political Science at the University of Utah. Research on public policy, media, policing, and causal inference.">
+
+  <!-- Header -->
+  <div class="text-center mb-8">
+    <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-text-dark-primary">
+      Joshua McCrain
+    </h1>
+    <p class="text-xl text-gray-600 dark:text-text-dark-secondary mt-2">
+      Assistant Professor of Political Science
+    </p>
+    <p class="text-lg text-utah-red dark:text-utah-red-light font-medium">
+      University of Utah
+    </p>
+
+    <!-- Quick links -->
+    <div class="flex flex-wrap justify-center gap-3 mt-4">
+      <a href="/McCrain_CV.pdf" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-utah-red dark:bg-utah-red-light text-white rounded-lg text-sm font-medium hover:no-underline hover:opacity-90 transition-opacity">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        CV
+      </a>
+      <a href="https://scholar.google.com/citations?user=oq6WHEAAAAAJ" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-carolina-blue text-carolina-blue rounded-lg text-sm font-medium hover:no-underline hover:bg-carolina-blue hover:text-white transition-colors">
+        Google Scholar
+      </a>
+      <span class="obfuscated-email inline-flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 dark:border-surface-dark-border text-gray-600 dark:text-text-dark-secondary rounded-lg text-sm font-medium cursor-pointer hover:bg-gray-100 dark:hover:bg-surface-dark-raised transition-colors" data-u="josh.mccrain" data-d="utah.edu">
+        josh.mccrain [at] utah [dot] edu
+      </span>
+    </div>
+  </div>
+
+  <!-- Photo + Bio -->
+  <div class="flex flex-col md:flex-row gap-6 items-start">
+    <div class="shrink-0 mx-auto md:mx-0">
+      <div class="w-36 h-36 rounded-xl bg-gray-200 dark:bg-surface-dark-raised overflow-hidden">
+        <img
+          src="/processed_headshot.avif"
+          alt="Joshua McCrain"
+          class="w-full h-full object-cover"
+          onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'flex items-center justify-center w-full h-36 text-gray-400 dark:text-text-dark-secondary text-sm\'>Photo</div>'"
+        />
+      </div>
+    </div>
+
+    <div class="text-gray-700 dark:text-text-dark-primary space-y-3 leading-relaxed">
+      <p>
+        I am an assistant professor in the
+        <a href="https://poli-sci.utah.edu/" target="_blank" rel="noopener">Department of Political Science</a>
+        at the University of Utah. I study <strong>public policy</strong>, with a focus on media policy,
+        policing, legislative institutions, AI in government and society, and local government. My work uses experiments and applied causal inference,
+        original data collection, and computational social science to understand how policies and institutions affect governance, political behavior,
+        accountability, and representation.
+      </p>
+      <p>
+        My research has been published in the <em>American Political Science Review</em>,
+        <em>Proceedings of the National Academy of Sciences</em>,
+        <em>Journal of Politics</em>,
+        <em>Journal of Policy Analysis and Management</em>,
+        <em>Public Administration Review</em>,
+        <em>Quarterly Journal of Political Science</em>,
+        <em>Criminology and Public Policy</em>,
+        and <em>Legislative Studies Quarterly</em>, among other outlets.
+        My research has been covered by <em>The New York Times</em>, <em>The Washington Post</em>, CNN, <em>New York Magazine</em>, NPR, and other outlets.
+      </p>
+      <p>
+        I direct the <strong>Policing Accountability and Policy Evaluation Research Lab (PAPER)</strong>
+        at the University of Utah and am a faculty affiliate at the
+        <strong>Governance and Responsible AI Lab (GRAIL)</strong> at Purdue University.
+        My research has been supported by over $1.3 million in external funding from the
+        National Institute of Justice, Arnold Ventures, and the Russell Sage Foundation.
+      </p>
+      <p>
+        I received my Ph.D. from Emory University in 2020 and hold an M.A. and B.A. from the
+        University of North Carolina at Chapel Hill. Before graduate school, I worked in government
+        relations and public policy in Washington, D.C.
+      </p>
+    </div>
+  </div>
+
+  <!-- Recent Publications -->
+  <div class="mt-12">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-bold text-gray-900 dark:text-text-dark-primary">Recent Publications</h2>
+      <a href="/publications/" class="text-sm text-carolina-blue hover:underline">View all &rarr;</a>
+    </div>
+    <div class="space-y-4">
+      {recentPubs.map((pub: any) => (
+        <div class="border border-gray-200 dark:border-surface-dark-border rounded-lg p-4">
+          <h3 class="font-semibold text-gray-900 dark:text-text-dark-primary text-sm leading-snug">
+            {pub.doi ? (
+              <a href={pub.doi} target="_blank" rel="noopener" class="hover:text-carolina-blue">{pub.title}</a>
+            ) : (
+              pub.title
+            )}
+          </h3>
+          <p class="text-sm text-gray-600 dark:text-text-dark-secondary mt-1" set:html={boldMcCrain(pub.authors)} />
+          <p class="text-sm mt-0.5">
+            <em class="text-gray-700 dark:text-text-dark-primary">{pub.journal}</em>
+            <span class="text-gray-500 dark:text-text-dark-secondary"> ({pub.year})</span>
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- Research Areas & Info -->
+  <div class="grid md:grid-cols-2 gap-8 mt-12">
+    <!-- Research Interests -->
+    <div>
+      <h2 class="text-xl font-bold text-gray-900 dark:text-text-dark-primary mb-4">Research Areas</h2>
+      <ul class="space-y-2 text-gray-700 dark:text-text-dark-primary">
+        <li class="flex items-start gap-2">
+          <span class="text-utah-red dark:text-utah-red-light mt-1">&#9656;</span>
+          <span>Media Policy &mdash; local news, media consolidation, media bias</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-utah-red dark:text-utah-red-light mt-1">&#9656;</span>
+          <span>Policing &mdash; civilian oversight, reform, body-worn cameras, AI</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-utah-red dark:text-utah-red-light mt-1">&#9656;</span>
+          <span>Lobbying & Interest Groups &mdash; revolving door, K Street</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-utah-red dark:text-utah-red-light mt-1">&#9656;</span>
+          <span>Legislative Politics &mdash; Congress, state legislatures, staff</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-utah-red dark:text-utah-red-light mt-1">&#9656;</span>
+          <span>Causal Inference &mdash; natural experiments, survey experiments</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Affiliations & Contact -->
+    <div>
+      <h2 class="text-xl font-bold text-gray-900 dark:text-text-dark-primary mb-4">Affiliations</h2>
+      <ul class="space-y-2 text-gray-700 dark:text-text-dark-primary text-sm">
+        <li>Director, <strong>PAPER Lab</strong>, University of Utah</li>
+        <li>Faculty Affiliate, <strong>GRAIL</strong>, Purdue University</li>
+      </ul>
+
+      <h2 class="text-xl font-bold text-gray-900 dark:text-text-dark-primary mb-4 mt-8">Education</h2>
+      <ul class="space-y-1 text-gray-700 dark:text-text-dark-primary text-sm">
+        <li>Ph.D., Political Science, Emory University (2020)</li>
+        <li>M.A., Political Science, UNC Chapel Hill (2013)</li>
+        <li>B.A., Political Science, UNC Chapel Hill (2011)</li>
+      </ul>
+
+      <h2 class="text-xl font-bold text-gray-900 dark:text-text-dark-primary mb-4 mt-8">Contact</h2>
+      <ul class="space-y-1 text-sm text-gray-700 dark:text-text-dark-primary">
+        <li>
+          <span class="obfuscated-email cursor-pointer text-carolina-blue hover:underline" data-u="josh.mccrain" data-d="utah.edu">
+            josh.mccrain [at] utah [dot] edu
+          </span>
+        </li>
+        <li>260 South Central Campus Dr., Ste 3345</li>
+        <li>Salt Lake City, UT 84112</li>
+      </ul>
+    </div>
+  </div>
+
+  <script is:inline>
+    document.querySelectorAll('.obfuscated-email').forEach(el => {
+      el.addEventListener('click', () => {
+        const addr = el.dataset.u + '@' + el.dataset.d;
+        window.location.href = 'mailto:' + addr;
+      });
+    });
+  </script>
+
+</BaseLayout>

@@ -1,0 +1,161 @@
+---
+interface Props {
+  years: number[];
+  keywords: { tier: string; label: string; items: string[] }[];
+}
+
+const { years, keywords } = Astro.props;
+---
+
+<div id="pub-filters" class="mb-8 space-y-4">
+  <!-- Year filters -->
+  <div>
+    <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-text-dark-secondary mb-2">Filter by Year</h4>
+    <div class="flex flex-wrap gap-2">
+      <button class="year-btn px-3 py-1 text-sm rounded-full bg-utah-red text-white font-medium" data-year="all">
+        All
+      </button>
+      {years.map(y => (
+        <button class="year-btn px-3 py-1 text-sm rounded-full bg-gray-100 dark:bg-surface-dark-raised text-gray-700 dark:text-text-dark-primary hover:bg-utah-red hover:text-white transition-colors font-medium" data-year={y}>
+          {y}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <!-- Keyword filters -->
+  <div>
+    <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-text-dark-secondary mb-2">Filter by Topic</h4>
+    {keywords.map(group => (
+      <div class="mb-2">
+        <span class="text-xs text-gray-400 dark:text-text-dark-secondary mr-2">{group.label}:</span>
+        <div class="inline-flex flex-wrap gap-1.5">
+          {group.items.map(kw => (
+            <button
+              class:list={[
+                'kw-btn px-2 py-0.5 text-xs rounded-full font-medium transition-colors',
+                group.tier === 'discipline'
+                  ? 'bg-gray-200 dark:bg-surface-dark-raised text-gray-700 dark:text-text-dark-primary hover:bg-utah-red hover:text-white'
+                  : group.tier === 'subfield'
+                    ? 'border border-carolina-blue text-carolina-blue dark:border-carolina-blue-light dark:text-carolina-blue-light hover:bg-carolina-blue hover:text-white'
+                    : 'bg-gray-100 dark:bg-surface-dark-raised text-gray-600 dark:text-text-dark-secondary hover:bg-gray-300 dark:hover:bg-surface-dark-border'
+              ]}
+              data-keyword={kw}
+            >
+              {kw}
+            </button>
+          ))}
+        </div>
+      </div>
+    ))}
+    <button id="clear-filters" class="hidden text-xs text-utah-red dark:text-utah-red-light hover:underline mt-1 cursor-pointer">
+      Clear all filters
+    </button>
+  </div>
+</div>
+
+<script is:inline>
+document.addEventListener('DOMContentLoaded', function() {
+  let activeYear = 'all';
+  let activeKeyword = null;
+
+  const yearBtns = document.querySelectorAll('.year-btn');
+  const kwBtns = document.querySelectorAll('.kw-btn');
+  const kwTags = document.querySelectorAll('.keyword-tag');
+  const cards = document.querySelectorAll('.pub-card');
+  const clearBtn = document.getElementById('clear-filters');
+  const sections = document.querySelectorAll('.pub-section');
+
+  function filterCards() {
+    cards.forEach(card => {
+      const cardYear = card.dataset.year;
+      const cardKeywords = card.dataset.keywords ? card.dataset.keywords.split(',') : [];
+
+      const yearMatch = activeYear === 'all' || cardYear === activeYear;
+      const kwMatch = !activeKeyword || cardKeywords.includes(activeKeyword);
+
+      card.style.display = (yearMatch && kwMatch) ? '' : 'none';
+    });
+
+    // Update section visibility and counts
+    sections.forEach(section => {
+      const sectionCards = section.querySelectorAll('.pub-card');
+      let visibleCount = 0;
+      sectionCards.forEach(c => { if (c.style.display !== 'none') visibleCount++; });
+      const countEl = section.querySelector('.pub-count');
+      if (countEl) countEl.textContent = '(' + visibleCount + ')';
+      const cardContainer = section.querySelector('.pub-cards');
+      if (cardContainer) {
+        section.style.display = visibleCount === 0 ? 'none' : '';
+      }
+    });
+
+    clearBtn.classList.toggle('hidden', activeYear === 'all' && !activeKeyword);
+  }
+
+  function setActiveYear(year) {
+    activeYear = year;
+    yearBtns.forEach(btn => {
+      const isActive = btn.dataset.year === year;
+      btn.classList.toggle('bg-utah-red', isActive);
+      btn.classList.toggle('text-white', isActive);
+      btn.classList.toggle('bg-gray-100', !isActive);
+      btn.classList.toggle('dark:bg-surface-dark-raised', !isActive);
+      btn.classList.toggle('text-gray-700', !isActive);
+      btn.classList.toggle('dark:text-text-dark-primary', !isActive);
+    });
+    filterCards();
+  }
+
+  function setActiveKeyword(kw) {
+    activeKeyword = activeKeyword === kw ? null : kw;
+    kwBtns.forEach(btn => {
+      const isActive = btn.dataset.keyword === activeKeyword;
+      if (isActive) {
+        btn.classList.add('ring-2', 'ring-utah-red');
+      } else {
+        btn.classList.remove('ring-2', 'ring-utah-red');
+      }
+    });
+    filterCards();
+  }
+
+  yearBtns.forEach(btn => {
+    btn.addEventListener('click', () => setActiveYear(btn.dataset.year));
+  });
+
+  kwBtns.forEach(btn => {
+    btn.addEventListener('click', () => setActiveKeyword(btn.dataset.keyword));
+  });
+
+  kwTags.forEach(tag => {
+    tag.addEventListener('click', () => setActiveKeyword(tag.dataset.keyword));
+  });
+
+  clearBtn.addEventListener('click', () => {
+    activeYear = 'all';
+    activeKeyword = null;
+    yearBtns.forEach(btn => {
+      const isAll = btn.dataset.year === 'all';
+      btn.classList.toggle('bg-utah-red', isAll);
+      btn.classList.toggle('text-white', isAll);
+      btn.classList.toggle('bg-gray-100', !isAll);
+      btn.classList.toggle('dark:bg-surface-dark-raised', !isAll);
+      btn.classList.toggle('text-gray-700', !isAll);
+      btn.classList.toggle('dark:text-text-dark-primary', !isAll);
+    });
+    kwBtns.forEach(btn => btn.classList.remove('ring-2', 'ring-utah-red'));
+    filterCards();
+  });
+
+  // Abstract toggles
+  document.querySelectorAll('.abstract-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const content = btn.closest('.pub-card').querySelector('.abstract-content');
+      const isHidden = content.classList.contains('hidden');
+      content.classList.toggle('hidden');
+      btn.textContent = isHidden ? 'Hide Abstract' : 'Show Abstract';
+    });
+  });
+});
+</script>

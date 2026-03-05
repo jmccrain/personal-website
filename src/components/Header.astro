@@ -1,0 +1,80 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+
+const navLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/publications/', label: 'Publications' },
+  { href: '/grants/', label: 'Grants' },
+  { href: '/media/', label: 'Media' },
+  { href: '/cv/', label: 'CV' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-50 bg-white/80 dark:bg-surface-dark/80 backdrop-blur-md border-b border-gray-200 dark:border-surface-dark-border">
+  <nav class="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+    <a href="/" class="text-lg font-bold text-utah-red dark:text-utah-red-light hover:no-underline">
+      Joshua McCrain
+    </a>
+
+    <!-- Desktop nav -->
+    <div class="hidden md:flex items-center gap-6">
+      {navLinks.map(link => (
+        <a
+          href={link.href}
+          class:list={[
+            'text-sm font-medium hover:text-utah-red dark:hover:text-utah-red-light transition-colors hover:no-underline',
+            currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href))
+              ? 'text-utah-red dark:text-utah-red-light'
+              : 'text-gray-600 dark:text-text-dark-secondary'
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+      <ThemeToggle />
+    </div>
+
+    <!-- Mobile menu button -->
+    <div class="flex items-center gap-2 md:hidden">
+      <ThemeToggle />
+      <button id="mobile-menu-btn" aria-label="Toggle menu" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-surface-dark-raised">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path id="menu-open" stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          <path id="menu-close" class="hidden" stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 dark:border-surface-dark-border bg-white dark:bg-surface-dark">
+    <div class="px-4 py-3 space-y-2">
+      {navLinks.map(link => (
+        <a
+          href={link.href}
+          class:list={[
+            'block py-2 text-sm font-medium hover:text-utah-red dark:hover:text-utah-red-light hover:no-underline',
+            currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href))
+              ? 'text-utah-red dark:text-utah-red-light'
+              : 'text-gray-600 dark:text-text-dark-secondary'
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</header>
+
+<script is:inline>
+  document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+    const menu = document.getElementById('mobile-menu');
+    const open = document.getElementById('menu-open');
+    const close = document.getElementById('menu-close');
+    menu.classList.toggle('hidden');
+    open.classList.toggle('hidden');
+    close.classList.toggle('hidden');
+  });
+</script>

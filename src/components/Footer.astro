@@ -1,0 +1,29 @@
+---
+---
+<footer class="border-t border-gray-200 dark:border-surface-dark-border mt-16">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-500 dark:text-text-dark-secondary">
+      <div class="flex items-center gap-4">
+        <span class="obfuscated-email cursor-pointer hover:text-utah-red dark:hover:text-utah-red-light" data-u="josh.mccrain" data-d="utah.edu">
+          josh.mccrain [at] utah [dot] edu
+        </span>
+        <a href="https://scholar.google.com/citations?user=oq6WHEAAAAAJ" target="_blank" rel="noopener" class="hover:text-utah-red dark:hover:text-utah-red-light">
+          Google Scholar
+        </a>
+        <a href="https://github.com/joshuamccrain" target="_blank" rel="noopener" class="hover:text-utah-red dark:hover:text-utah-red-light">
+          GitHub
+        </a>
+      </div>
+      <p>&copy; {new Date().getFullYear()} Joshua McCrain</p>
+    </div>
+  </div>
+</footer>
+
+<script is:inline>
+  document.querySelectorAll('.obfuscated-email').forEach(el => {
+    el.addEventListener('click', () => {
+      const addr = el.dataset.u + '@' + el.dataset.d;
+      window.location.href = 'mailto:' + addr;
+    });
+  });
+</script>

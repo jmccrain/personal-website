@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --color-utah-red: #CC0000;
+  --color-utah-red-dark: #A30000;
+  --color-utah-red-light: #EF4444;
+  --color-carolina-blue: #4B9CD3;
+  --color-carolina-blue-dark: #3A7FB5;
+  --color-carolina-blue-light: #7AB8E0;
+  --color-surface-dark: #1C2128;
+  --color-surface-dark-raised: #242B33;
+  --color-surface-dark-border: #353D47;
+  --color-text-dark-primary: #D1D5DB;
+  --color-text-dark-secondary: #8B949E;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  body {
+    @apply bg-white text-gray-900 dark:bg-surface-dark dark:text-text-dark-primary transition-colors duration-200;
+  }
+  a {
+    @apply text-carolina-blue dark:text-carolina-blue-light hover:underline;
+  }
+}

@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import yaml from 'js-yaml';
+import fs from 'node:fs';
+
+const mediaData = yaml.load(fs.readFileSync('src/data/media.yaml', 'utf8')) as any;
+
+const coverage = mediaData.coverage || [];
+const publicScholarship = mediaData.public_scholarship || [];
+const awards = mediaData.awards || [];
+---
+
+<BaseLayout title="Media" description="Media coverage, public scholarship, and awards for Joshua McCrain.">
+
+  <h1 class="text-3xl font-bold text-gray-900 dark:text-text-dark-primary mb-2">Media & Public Scholarship</h1>
+  <p class="text-gray-600 dark:text-text-dark-secondary mb-8">
+    Selected coverage in <em>The New York Times</em>, <em>The Washington Post</em>, <em>The Guardian</em>, <em>NPR</em>, <em>CNN</em>, <em>Vox</em>, and other outlets.
+  </p>
+
+  <!-- Selected Public Scholarship -->
+  <section>
+    <h2 class="text-xl font-bold text-gray-900 dark:text-text-dark-primary mb-4">Public Scholarship</h2>
+    <div class="space-y-4">
+      {publicScholarship.map((item: any) => (
+        <div class="border-b border-gray-100 dark:border-surface-dark-border pb-4">
+          <h3 class="font-medium text-gray-900 dark:text-text-dark-primary">
+            {item.url ? (
+              <a href={item.url} target="_blank" rel="noopener" class="hover:text-carolina-blue">
+                "{item.title}"
+              </a>
+            ) : (
+              <span>"{item.title}"</span>
+            )}
+          </h3>
+          <p class="text-sm text-gray-600 dark:text-text-dark-secondary mt-0.5">
+            <em>{item.outlet}</em>
+            {item.coauthors && <span> ({item.coauthors})</span>}
+            <span class="text-gray-400 dark:text-text-dark-secondary"> — {item.date}</span>
+          </p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Media Coverage -->
+  <section class="mt-12">
+    <h2 class="text-xl font-bold text-gray-900 dark:text-text-dark-primary mb-4">Media Coverage</h2>
+    <div class="space-y-3">
+      {coverage.map((item: any) => (
+        <div class="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4 border-b border-gray-100 dark:border-surface-dark-border pb-3">
+          <span class="text-xs text-gray-400 dark:text-text-dark-secondary shrink-0 w-28">{item.date}</span>
+          <div class="flex-1 min-w-0">
+            {item.url ? (
+              <a href={item.url} target="_blank" rel="noopener" class="text-sm font-medium text-gray-900 dark:text-text-dark-primary hover:text-carolina-blue">
+                {item.title}
+              </a>
+            ) : (
+              <span class="text-sm font-medium text-gray-900 dark:text-text-dark-primary">{item.title}</span>
+            )}
+            <span class="text-sm text-gray-500 dark:text-text-dark-secondary"> — <em>{item.outlet}</em></span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Awards -->
+  <section class="mt-12">
+    <h2 class="text-xl font-bold text-gray-900 dark:text-text-dark-primary mb-4">Awards</h2>
+    <div class="space-y-3">
+      {awards.map((award: any) => (
+        <div class="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+          <span class="text-sm text-gray-500 dark:text-text-dark-secondary shrink-0 w-12">{award.year}</span>
+          <div>
+            <h3 class="font-medium text-gray-900 dark:text-text-dark-primary">{award.title}</h3>
+            {award.note && (
+              <p class="text-sm text-gray-600 dark:text-text-dark-secondary">{award.note}</p>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+</BaseLayout>

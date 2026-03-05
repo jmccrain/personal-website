@@ -1,0 +1,56 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Joshua McCrain — Assistant Professor of Political Science, University of Utah. Research on media, lobbying, policing, and legislative politics.' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <title>{title} | Joshua McCrain</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="canonical" href={Astro.url.href} />
+
+  <!-- Schema.org -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Joshua McCrain",
+    "jobTitle": "Assistant Professor of Political Science",
+    "affiliation": {
+      "@type": "Organization",
+      "name": "University of Utah"
+    },
+    "url": "https://joshuamccrain.com",
+    "sameAs": [
+      "https://scholar.google.com/citations?user=oq6WHEAAAAAJ",
+      "https://github.com/joshuamccrain"
+    ]
+  })} />
+
+  <!-- Dark mode: apply before render to avoid flash -->
+  <script is:inline>
+    const theme = localStorage.getItem('theme');
+    if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+</head>
+<body class="min-h-screen flex flex-col">
+  <Header />
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-8">
+    <slot />
+  </main>
+  <Footer />
+</body>
+</html>

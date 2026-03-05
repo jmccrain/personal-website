@@ -1,0 +1,111 @@
+---
+interface Props {
+  title: string;
+  authors: string;
+  journal?: string;
+  year?: number;
+  doi?: string;
+  preprint?: string;
+  abstract?: string;
+  note?: string;
+  discipline?: string;
+  keywords?: string[];
+  methods?: string[];
+  number?: number;
+}
+
+const { title, authors, journal, year, doi, preprint, abstract, note, discipline, keywords = [], methods = [], number } = Astro.props;
+
+// Bold "McCrain" in authors string
+function boldMcCrain(str: string): string {
+  return str.replace(/(McCrain,?\s*(?:Joshua|J\.)?)/g, '<strong>$1</strong>');
+}
+
+// Color mapping for discipline tags
+const disciplineColors: Record<string, string> = {
+  'Political Science': 'bg-blue-600 text-white',
+  'Public Policy': 'bg-red-700 text-white',
+  'Criminology / Criminal Justice': 'bg-slate-600 text-white',
+};
+
+const allKeywords = [...(discipline ? [discipline] : []), ...keywords, ...(methods || [])];
+const dataKeywords = allKeywords.join(',');
+---
+
+<div
+  class="pub-card border-b border-gray-200 dark:border-surface-dark-border py-5"
+  data-year={year || ''}
+  data-keywords={dataKeywords}
+>
+  <div class="flex gap-3">
+    {number && (
+      <span class="text-sm text-gray-400 dark:text-text-dark-secondary font-mono pt-0.5 shrink-0">{number}.</span>
+    )}
+    <div class="flex-1 min-w-0">
+      <h3 class="text-base font-semibold text-gray-900 dark:text-text-dark-primary leading-snug">
+        {doi ? (
+          <a href={doi} target="_blank" rel="noopener" class="hover:text-carolina-blue">{title}</a>
+        ) : (
+          title
+        )}
+      </h3>
+
+      <p class="text-sm text-gray-600 dark:text-text-dark-secondary mt-1" set:html={boldMcCrain(authors)} />
+
+      {journal && (
+        <p class="text-sm mt-0.5">
+          <em class="text-gray-700 dark:text-text-dark-primary">{journal}</em>
+          {year && <span class="text-gray-500 dark:text-text-dark-secondary"> ({year})</span>}
+        </p>
+      )}
+
+      {note && (
+        <p class="text-sm text-gray-500 dark:text-text-dark-secondary mt-1 italic">{note}</p>
+      )}
+
+      <!-- Tags -->
+      <div class="flex flex-wrap gap-1.5 mt-2">
+        {discipline && (
+          <span class={`inline-block px-2 py-0.5 rounded-full text-xs font-medium keyword-tag ${disciplineColors[discipline] || 'bg-gray-500 text-white'}`} data-keyword={discipline}>
+            {discipline}
+          </span>
+        )}
+        {keywords.map(kw => (
+          <span class="inline-block px-2 py-0.5 rounded-full text-xs font-medium border border-carolina-blue text-carolina-blue dark:border-carolina-blue-light dark:text-carolina-blue-light keyword-tag cursor-pointer hover:bg-carolina-blue hover:text-white transition-colors" data-keyword={kw}>
+            {kw}
+          </span>
+        ))}
+        {methods && methods.map(m => (
+          <span class="inline-block px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-surface-dark-raised dark:text-text-dark-secondary keyword-tag cursor-pointer hover:bg-gray-200 dark:hover:bg-surface-dark-border transition-colors" data-keyword={m}>
+            {m}
+          </span>
+        ))}
+      </div>
+
+      <!-- Links -->
+      <div class="flex items-center gap-3 mt-2">
+        {doi && (
+          <a href={doi} target="_blank" rel="noopener" class="text-xs font-medium text-carolina-blue dark:text-carolina-blue-light hover:underline">
+            DOI
+          </a>
+        )}
+        {preprint && (
+          <a href={preprint} target="_blank" rel="noopener" class="text-xs font-medium text-carolina-blue dark:text-carolina-blue-light hover:underline">
+            Preprint
+          </a>
+        )}
+        {abstract && (
+          <button class="abstract-toggle text-xs font-medium text-gray-500 dark:text-text-dark-secondary hover:text-utah-red dark:hover:text-utah-red-light cursor-pointer">
+            Show Abstract
+          </button>
+        )}
+      </div>
+
+      {abstract && (
+        <div class="abstract-content hidden mt-3 p-3 bg-gray-50 dark:bg-surface-dark-raised rounded-lg text-sm text-gray-700 dark:text-text-dark-primary leading-relaxed">
+          {abstract}
+        </div>
+      )}
+    </div>
+  </div>
+</div>
